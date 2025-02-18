@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Staatliches';
+  src: url('@/assets/fonts/Staatliches-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@layer base {
+  :root {
+    font-family: 'Staatliches', system-ui, sans-serif;
+  }
+}
+
+/* Pour s'assurer que la police s'applique partout */
