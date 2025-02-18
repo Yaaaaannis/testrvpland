@@ -163,7 +163,7 @@ function App() {
           <div className="h-[3px] w-128 bg-white mb-4"></div>
           <button 
             onClick={handlePrev}
-            className="text-white hover:text-gray-300 transition-colors whitespace-nowrap ml-114 text-xl hover:cursor-pointer"
+            className="text-white hover:text-[#FCC200] transition-colors whitespace-nowrap ml-114 text-xl hover:cursor-pointer"
           >
             PREV
           </button>
@@ -173,7 +173,7 @@ function App() {
       <div className="fixed inset-y-0 right-0 w-24 flex flex-col items-center justify-center z-20 mt-100">
         <div className="flex flex-col items-end">
           <div className="h-[3px] w-128 bg-white mb-4"></div>
-          <button className="text-white hover:text-gray-300 transition-colors whitespace-nowrap mr-114 text-xl hover:cursor-pointer"
+          <button className="text-white hover:text-[#FCC200] transition-colors whitespace-nowrap mr-114 text-xl hover:cursor-pointer"
             onClick={handleNext}
           >
             NEXT
@@ -244,15 +244,15 @@ function App() {
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
           <button
             onClick={handlePlayPause}
-            className="bg-black/50 p-3 rounded-full hover:bg-black/70 transition-colors"
+            className="bg-black/50 p-3 rounded-full hover:bg-black/70 transition-colors group"
           >
             {isPlaying ? (
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-white group-hover:text-[#FCC200] transition-colors" viewBox="0 0 24 24" fill="currentColor">
                 <rect x="6" y="4" width="4" height="16" fill="currentColor"/>
                 <rect x="14" y="4" width="4" height="16" fill="currentColor"/>
               </svg>
             ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor">
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-white group-hover:text-[#FCC200] transition-colors" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M8 5v14l11-7z" fill="currentColor"/>
               </svg>
             )}
