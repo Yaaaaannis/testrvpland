@@ -160,10 +160,10 @@ function App() {
       {/* Navigation Bars */}
       <div className="fixed inset-y-0 left-0 w-24 flex flex-col items-center justify-center z-20 mt-100">
         <div className="flex flex-col items-start">
-          <div className="h-[3px] w-128 bg-white mb-8"></div>
+          <div className="h-[3px] w-128 bg-white mb-4"></div>
           <button 
             onClick={handlePrev}
-            className="text-white hover:text-gray-300 transition-colors whitespace-nowrap ml-114 text-xl"
+            className="text-white hover:text-gray-300 transition-colors whitespace-nowrap ml-114 text-xl hover:cursor-pointer"
           >
             PREV
           </button>
@@ -172,8 +172,8 @@ function App() {
 
       <div className="fixed inset-y-0 right-0 w-24 flex flex-col items-center justify-center z-20 mt-100">
         <div className="flex flex-col items-end">
-          <div className="h-[3px] w-128 bg-white mb-8"></div>
-          <button className="text-white hover:text-gray-300 transition-colors whitespace-nowrap mr-114 text-xl"
+          <div className="h-[3px] w-128 bg-white mb-4"></div>
+          <button className="text-white hover:text-gray-300 transition-colors whitespace-nowrap mr-114 text-xl hover:cursor-pointer"
             onClick={handleNext}
           >
             NEXT
