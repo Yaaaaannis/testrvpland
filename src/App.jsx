@@ -12,12 +12,13 @@ function App() {
   const [isMuted, setIsMuted] = useState(false)
   const [volume, setVolume] = useState(100)
   const [isVolumeControlVisible, setIsVolumeControlVisible] = useState(false)
-  const [isPlaying, setIsPlaying] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(true)
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const currentVideo = videosData.videos[currentVideoIndex];
   const [isTransitioning, setIsTransitioning] = useState(false);
   const artistRef = useRef(null);
   const titleRef = useRef(null);
+  const [dots, setDots] = useState('');
 
   useEffect(() => {
     const tag = document.createElement('script');
@@ -51,58 +52,66 @@ function App() {
   useLayoutEffect(() => {
     const createSprayEffect = (element) => {
       const text = element.textContent;
-      element.innerHTML = ''; 
+      element.innerHTML = '';
+      element.style.whiteSpace = 'pre';
       
       const chars = text.split('').map(char => {
         const span = document.createElement('span');
-        span.textContent = char;
+        if (char === ' ') {
+          span.innerHTML = '&nbsp;';
+        } else {
+          span.textContent = char;
+        }
         span.style.display = 'inline-block';
-        span.style.textShadow = '0 0 0 rgba(255,255,255,0)';
         element.appendChild(span);
         return span;
       });
 
-      chars.forEach((char) => {
+      const animateChar = (char) => {
         const willHavePermEffect = Math.random() < 0.4;
-
+        const pauseDuration = gsap.utils.random(2, 4);
+        
         gsap.to(char, {
-          filter: 'blur(12px)',
+          filter: 'blur(8px)',
           opacity: 0.7,
-          textShadow: '0 0 8px rgba(255,255,255,0.6)',
-          scale: 1.1,
-          duration: 1,
-          repeat: 2,
+          duration: 0.5,
+          repeat: 3,
           yoyo: true,
           ease: 'power1.inOut',
           delay: Math.random() * 2,
           onComplete: () => {
+            // Période statique
             gsap.to(char, {
-              filter: willHavePermEffect ? 'blur(8px)' : 'blur(0px)',
+              filter: willHavePermEffect ? 'blur(5px)' : 'blur(0px)',
               opacity: willHavePermEffect ? 0.85 : 1,
-              textShadow: willHavePermEffect ? '0 0 12px rgba(255,255,255,0.4)' : '0 0 0 rgba(255,255,255,0)',
-              scale: willHavePermEffect ? 1.05 : 1,
               duration: 0.5,
+              onComplete: () => {
+                // Relance l'animation après la pause
+                gsap.delayedCall(pauseDuration, () => animateChar(char));
+              }
             });
           }
         });
 
         gsap.to(char, {
-          x: 'random(-5, 5)',
-          y: 'random(-5, 5)',
-          duration: 1,
-          repeat: 2,
+          x: 'random(-3, 3)',
+          y: 'random(-3, 3)',
+          duration: 0.5,
+          repeat: 3,
           yoyo: true,
           ease: 'none',
           delay: Math.random() * 2,
           onComplete: () => {
             gsap.to(char, {
-              x: willHavePermEffect ? gsap.utils.random(-3, 3) : 0,
-              y: willHavePermEffect ? gsap.utils.random(-3, 3) : 0,
-              duration: 0.5,
+              x: willHavePermEffect ? gsap.utils.random(-2, 2) : 0,
+              y: willHavePermEffect ? gsap.utils.random(-2, 2) : 0,
+              duration: 0.5
             });
           }
         });
-      });
+      };
+
+      chars.forEach(animateChar);
     };
 
     if (artistRef.current && titleRef.current) {
@@ -110,6 +119,23 @@ function App() {
       createSprayEffect(titleRef.current);
     }
   }, [currentVideo]);
+
+  useEffect(() => {
+    if (isPlaying) {
+      const interval = setInterval(() => {
+        setDots(prev => {
+          if (prev === '') return '.';
+          if (prev === '.') return '..';
+          if (prev === '..') return '...';
+          return '';
+        });
+      }, 600);
+
+      return () => clearInterval(interval);
+    } else {
+      setDots('');
+    }
+  }, [isPlaying]);
 
   const handleStart = () => {
     if (player) {
@@ -329,7 +355,7 @@ function App() {
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
           <button
             onClick={handlePlayPause}
-            className="bg-black/50 p-3 rounded-full hover:bg-black/70 transition-colors group"
+            className=" p-3 rounded-full  transition-colors group hover:cursor-pointer"
           >
             {isPlaying ? (
               <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-white group-hover:text-[#FCC200] transition-colors" viewBox="0 0 24 24" fill="currentColor">
@@ -342,6 +368,26 @@ function App() {
               </svg>
             )}
           </button>
+        </div>
+      )}
+
+      {/* Ajout du titre de la musique en cours de lecture */}
+      {!isLoading && (
+        <div className={`fixed bottom-6 left-6 z-50 transition-opacity duration-1000 ${
+          isTransitioning ? 'opacity-0' : 'opacity-100'
+        }`}>
+          <div className=" px-4 py-2 rounded-lg">
+            <p className="text-white text-sm">
+              {isPlaying ? (
+                <span className="flex items-center gap-1">
+                  Playing: {currentVideo.title + " - " + currentVideo.artist}
+                  <span className="inline-block w-6">{dots}</span>
+                </span>
+              ) : (
+                <span>Paused: {currentVideo.title}</span>
+              )}
+            </p>
+          </div>
         </div>
       )}
     </div>
