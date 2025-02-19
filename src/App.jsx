@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import videosData from './data/videos.json'
+import gsap from 'gsap'
 
 import './App.css'
 import Header from './components/Header'
@@ -15,6 +16,8 @@ function App() {
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const currentVideo = videosData.videos[currentVideoIndex];
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const artistRef = useRef(null);
+  const titleRef = useRef(null);
 
   useEffect(() => {
     const tag = document.createElement('script');
@@ -44,6 +47,69 @@ function App() {
       });
     };
   }, [currentVideoIndex]);
+
+  useLayoutEffect(() => {
+    const createSprayEffect = (element) => {
+      const text = element.textContent;
+      element.innerHTML = ''; 
+      
+      const chars = text.split('').map(char => {
+        const span = document.createElement('span');
+        span.textContent = char;
+        span.style.display = 'inline-block';
+        span.style.textShadow = '0 0 0 rgba(255,255,255,0)';
+        element.appendChild(span);
+        return span;
+      });
+
+      chars.forEach((char) => {
+        const willHavePermEffect = Math.random() < 0.4;
+
+        gsap.to(char, {
+          filter: 'blur(12px)',
+          opacity: 0.7,
+          textShadow: '0 0 8px rgba(255,255,255,0.6)',
+          scale: 1.1,
+          duration: 1,
+          repeat: 2,
+          yoyo: true,
+          ease: 'power1.inOut',
+          delay: Math.random() * 2,
+          onComplete: () => {
+            gsap.to(char, {
+              filter: willHavePermEffect ? 'blur(8px)' : 'blur(0px)',
+              opacity: willHavePermEffect ? 0.85 : 1,
+              textShadow: willHavePermEffect ? '0 0 12px rgba(255,255,255,0.4)' : '0 0 0 rgba(255,255,255,0)',
+              scale: willHavePermEffect ? 1.05 : 1,
+              duration: 0.5,
+            });
+          }
+        });
+
+        gsap.to(char, {
+          x: 'random(-5, 5)',
+          y: 'random(-5, 5)',
+          duration: 1,
+          repeat: 2,
+          yoyo: true,
+          ease: 'none',
+          delay: Math.random() * 2,
+          onComplete: () => {
+            gsap.to(char, {
+              x: willHavePermEffect ? gsap.utils.random(-3, 3) : 0,
+              y: willHavePermEffect ? gsap.utils.random(-3, 3) : 0,
+              duration: 0.5,
+            });
+          }
+        });
+      });
+    };
+
+    if (artistRef.current && titleRef.current) {
+      createSprayEffect(artistRef.current);
+      createSprayEffect(titleRef.current);
+    }
+  }, [currentVideo]);
 
   const handleStart = () => {
     if (player) {
@@ -156,6 +222,7 @@ function App() {
           </button>
         </div>
       )}
+      
 
       {/* Navigation Bars */}
       <div className="fixed inset-y-0 left-0 w-24 flex flex-col items-center justify-center z-20 mt-100">
@@ -187,9 +254,27 @@ function App() {
       {/* Contenu principal */}
       <div className="relative z-10 min-h-screen flex items-center justify-center">
         <div className="text-center text-white">
-          <h1 className="text-6xl mb-8 font-staatliches">{currentVideo.artist}</h1>
+          <h1 
+            ref={artistRef}
+            className="text-6xl mb-8 font-staatliches relative mix-blend-difference"
+            style={{ 
+              display: 'inline-block',
+              textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+            }}
+          >
+            {currentVideo.artist}
+          </h1>
           <div className="w-12 h-1.5 bg-white mx-auto mb-8"></div>
-          <h2 className="text-6xl font-staatliches">{currentVideo.title}</h2>
+          <h2 
+            ref={titleRef}
+            className="text-6xl font-staatliches relative mix-blend-difference"
+            style={{ 
+              display: 'inline-block',
+              textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+            }}
+          >
+            {currentVideo.title}
+          </h2>
         </div>
       </div>
 
